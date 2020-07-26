@@ -34,7 +34,7 @@ class MoneyTransaction(models.Model):
         (M_TYPE_WITHDRAW, "Withdraw"),
     )
 
-    transaction_type = models.CharField(choices=M_TYPE_CHOICES)
+    transaction_type = models.CharField(choices=M_TYPE_CHOICES, max_length=10)
     date = models.DateField()
     account_holder = models.ForeignKey(
         "users.User", on_delete=models.CASCADE, related_name="m_transactions"

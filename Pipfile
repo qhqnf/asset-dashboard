@@ -9,6 +9,7 @@ verify_ssl = true
 django = "==2.2.13"
 djangorestframework = "*"
 pandas = "*"
+requests = "*"
 
 [requires]
 python_version = "3.7"

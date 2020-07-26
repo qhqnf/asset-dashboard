@@ -29,9 +29,7 @@ def get_stock_data():
 
     otp = requests.get(generate_otp_url, headers=headers)
 
-    print(otp.text)
     headers.update({"Referer": "http://marketdata.krx.co.kr/mdi"})
-    print(headers)
 
     down_url = "http://file.krx.co.kr/download.jspx"
 
@@ -40,11 +38,16 @@ def get_stock_data():
     data.encoding = "utf-8-sig"
 
     stock_data = pd.read_csv(io.BytesIO(data.content), header=0, thousands=",").iloc[
-        :, [1, 2]
+        :, 0:3
     ]
 
-    print(stock_data)
+    return stock_data
 
 
-get_stock_data()
+data = get_stock_data()
+
+"""
+for row in range(1, 10):
+    print(data)  
+"""
 
