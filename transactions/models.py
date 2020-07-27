@@ -1,4 +1,5 @@
 from django.db import models
+import datetime
 
 
 class StockTransaction(models.Model):
@@ -14,14 +15,18 @@ class StockTransaction(models.Model):
     transaction_type = models.CharField(
         choices=S_TYPE_CHOICES, max_length=9, default=S_TYPE_BUY
     )
-    date = models.DateField()
+    date = models.DateField(default=datetime.datetime.now)
     shareholder = models.ForeignKey(
         "users.User", on_delete=models.CASCADE, related_name="s_transactions"
     )
     stock = models.ForeignKey(
         "stocks.Stock", on_delete=models.CASCADE, related_name="s_transactions"
     )
-    qunatitiy = models.IntegerField()
+    price = models.IntegerField(blank=False)
+    quantity = models.IntegerField(blank=False)
+
+    def __str__(self):
+        return f"{self.transaction_type} {self.quantity} shares of {self.stock}"
 
 
 class MoneyTransaction(models.Model):
@@ -35,8 +40,12 @@ class MoneyTransaction(models.Model):
     )
 
     transaction_type = models.CharField(choices=M_TYPE_CHOICES, max_length=10)
-    date = models.DateField()
+    date = models.DateField(default=datetime.datetime.now)
     account_holder = models.ForeignKey(
         "users.User", on_delete=models.CASCADE, related_name="m_transactions"
     )
-    quantitiy = models.IntegerField()
+    quantity = models.IntegerField(blank=False)
+
+    def __str__(self):
+        return f"{self.transaction_type} {self.quantity}won"
+

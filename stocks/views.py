@@ -1,3 +1,10 @@
-from django.shortcuts import render
+from rest_framework.generics import ListAPIView
+from .models import Stock
+from .serializers import StockSerializer
 
-# Create your views here.
+
+class StockListView(ListAPIView):
+
+    queryset = Stock.objects.all()
+    serializer_class = StockSerializer
+
