@@ -7,4 +7,3 @@ class StockListView(ListAPIView):
 
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
-
