@@ -2,7 +2,6 @@ from rest_framework.permissions import BasePermission
 from users.models import User
 
 
-class IsOwner(BasePermission):
-    def has_permission(self, request, view):
-        user = User.objects.get(pk=view.kwargs["pk"])
+class IsSelf(BasePermission):
+    def has_object_permission(self, request, view, user):
         return request.user == user

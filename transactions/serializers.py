@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import StockTransaction, MoneyTransaction
+from .models import StockTransaction, CashTransaction
 from users.serializers import UserSerializer
 from stocks.serializers import StockSerializer
 
@@ -21,4 +21,8 @@ class StockTransactionsSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        return StockTransaction.objects.create(**validated_data)
+        request = self.context.get("request")
+        s_transaction = StockTransaction.objects.create(
+            **validated_data, shareholder=request.user
+        )
+        return s_transaction

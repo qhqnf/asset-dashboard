@@ -31,3 +31,6 @@ class RelatedUserSerializer(serializers.ModelSerializer):
         model = User
         fields = ("username",)
 
+
+class TotalStockSerializer(serializers.Serializer):
+    pass

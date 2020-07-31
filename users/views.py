@@ -1,35 +1,79 @@
-from django.shortcuts import get_object_or_404
-from rest_framework.generics import ListCreateAPIView, ListAPIView
-from rest_framework.mixins import CreateModelMixin
+import jwt
+from django.conf import settings
+from django.db.models import Sum
+from django.contrib.auth import authenticate
 from rest_framework import status
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
+from rest_framework.permissions import IsAdminUser, AllowAny
+from rest_framework.decorators import action
 from .models import User
 from .serializers import UserSerializer
-from .permissions import IsOwner
+from .permissions import IsSelf
 from transactions.serializers import StockTransactionsSerializer
 
 
-class UserListView(ListAPIView):
+class UsersViewSet(ModelViewSet):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    def get_permissions(self):
+        if self.action == "list":
+            permission_classes = [IsAdminUser]
+        elif self.action == "create":
+            permission_classes = [AllowAny]
+        elif (
+            self.action == "update"
+            or self.action == "retrieve"
+            or self.action == "delete"
+            or self.action == "stocks"
+            or self.action == "cash"
+        ):
+            permission_classes = [IsSelf]
+        else:
+            permission_classes = [IsSelf]
 
-class UserTransactionView(ListCreateAPIView):
+        return [permission() for permission in permission_classes]
 
-    serializer_class = StockTransactionsSerializer
-    permission_classes = [IsOwner]
+    @action(detail=False, methods=["post"])
+    def login(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+        if not username or not password:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            encoded_jwt = jwt.encode(
+                {"pk": user.pk}, settings.SECRET_KEY, algorithm="HS256"
+            )
+            return Response(data={"token": encoded_jwt, "id": user.pk})
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-    def get_queryset(self):
-        user = get_object_or_404(User, pk=self.kwargs["pk"])
-        return user.s_transactions.all()
+    @action(detail=True, methods=["get"])
+    def stocks(self, request, pk):
+        user = self.get_object()
+        serializer = StockTransactionsSerializer(
+            user.s_transactions.all(), many=True
+        ).data
+        return Response(serializer, status=status.HTTP_200_OK)
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+    @action(detail=True, methods=["get"])
+    def total_stocks(self, request, pk):
+        user = self.get_object()
+        stocks = (
+            user.s_transactions.all()
+            .values("stock")
+            .annotate(total_quantity=Sum("quantity"))
         )
+        print(stocks)
+        return Response(status=HTTP_400_BAD_REQUEST)
 
+    @action(detail=True)
+    def cash(self, request, pk):
+        user = self.get_object()
+        serializer = StockTransactionsSerializer(
+            user.c_transactions.all(), many=True
+        ).data
+        return Response(serializer, status=status.HTTP_200_OK)

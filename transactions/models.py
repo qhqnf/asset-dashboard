@@ -29,20 +29,20 @@ class StockTransaction(models.Model):
         return f"{self.transaction_type} {self.quantity} shares of {self.stock}"
 
 
-class MoneyTransaction(models.Model):
+class CashTransaction(models.Model):
 
-    M_TYPE_DEPOSIT = "deposit"
-    M_TYPE_WITHDRAW = "withdraw"
+    C_TYPE_DEPOSIT = "deposit"
+    C_TYPE_WITHDRAW = "withdraw"
 
-    M_TYPE_CHOICES = (
-        (M_TYPE_DEPOSIT, "Deposit"),
-        (M_TYPE_WITHDRAW, "Withdraw"),
+    C_TYPE_CHOICES = (
+        (C_TYPE_DEPOSIT, "Deposit"),
+        (C_TYPE_WITHDRAW, "Withdraw"),
     )
 
-    transaction_type = models.CharField(choices=M_TYPE_CHOICES, max_length=10)
+    transaction_type = models.CharField(choices=C_TYPE_CHOICES, max_length=10)
     date = models.DateField(default=datetime.datetime.now)
     account_holder = models.ForeignKey(
-        "users.User", on_delete=models.CASCADE, related_name="m_transactions"
+        "users.User", on_delete=models.CASCADE, related_name="c_transactions"
     )
     quantity = models.IntegerField(blank=False)
 

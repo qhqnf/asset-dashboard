@@ -7,6 +7,6 @@ class StockTransactionAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(models.MoneyTransaction)
-class MoneyTransactionAdmin(admin.ModelAdmin):
+@admin.register(models.CashTransaction)
+class CashTransactionAdmin(admin.ModelAdmin):
     pass
