@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import StockTransaction, CashTransaction
+from .models import StockTransaction
 from users.serializers import UserSerializer
 from stocks.serializers import StockSerializer
 

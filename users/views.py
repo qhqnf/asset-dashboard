@@ -1,6 +1,6 @@
 import jwt
 from django.conf import settings
-from django.db.models import Sum
+from django.db.models import Sum, F
 from django.contrib.auth import authenticate
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.decorators import action
 from .models import User
-from .serializers import UserSerializer
+from .serializers import UserSerializer, AssetSerializer
 from .permissions import IsSelf
 from transactions.serializers import StockTransactionsSerializer
 
@@ -52,28 +52,28 @@ class UsersViewSet(ModelViewSet):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
     @action(detail=True, methods=["get"])
-    def stocks(self, request, pk):
+    def transactions(self, request, pk):
         user = self.get_object()
         serializer = StockTransactionsSerializer(
-            user.s_transactions.all(), many=True
+            user.transactions.all(), many=True
         ).data
         return Response(serializer, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["get"])
-    def total_stocks(self, request, pk):
+    def asset(self, request, pk):
         user = self.get_object()
-        stocks = (
-            user.s_transactions.all()
-            .values("stock")
-            .annotate(total_quantity=Sum("quantity"))
-        )
-        print(stocks)
-        return Response(status=HTTP_400_BAD_REQUEST)
+        if user.transactions.all() is not None:
+            stocks = (
+                user.transactions.all()
+                .annotate(total_price=F("price") * F("quantity"))
+                .values("stock")
+                .annotate(
+                    total_quantity=Sum("quantity"),
+                    avg_price=(Sum("total_price") / F("total_quantity")),
+                )
+            )
+            serializer = AssetSerializer(stocks, many=True).data
+            return Response(serializer, status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=True)
-    def cash(self, request, pk):
-        user = self.get_object()
-        serializer = StockTransactionsSerializer(
-            user.c_transactions.all(), many=True
-        ).data
-        return Response(serializer, status=status.HTTP_200_OK)

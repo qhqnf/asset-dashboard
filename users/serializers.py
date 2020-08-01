@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import User
+from stocks.serializers import StockSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -32,5 +33,10 @@ class RelatedUserSerializer(serializers.ModelSerializer):
         fields = ("username",)
 
 
-class TotalStockSerializer(serializers.Serializer):
-    pass
+class AssetSerializer(serializers.Serializer):
+
+    stock = serializers.CharField(max_length=10)
+    total_quantity = serializers.IntegerField()
+    avg_price = serializers.DecimalField(
+        max_digits=None, decimal_places=1, coerce_to_string=True
+    )
