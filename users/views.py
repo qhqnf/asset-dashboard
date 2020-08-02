@@ -1,6 +1,6 @@
 import jwt
 from django.conf import settings
-from django.db.models import Sum, F
+from django.db.models import Sum, F, Case, When
 from django.contrib.auth import authenticate
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
@@ -63,16 +63,21 @@ class UsersViewSet(ModelViewSet):
     def asset(self, request, pk):
         user = self.get_object()
         if user.transactions.all() is not None:
-            stocks = (
-                user.transactions.all()
-                .annotate(total_price=F("price") * F("quantity"))
-                .values("stock")
-                .annotate(
-                    total_quantity=Sum("quantity"),
-                    avg_price=(Sum("total_price") / F("total_quantity")),
-                )
+            stocks = user.transactions.all().annotate(
+                total_price=Case(
+                    When(transaction_type="buy", then=F("price") * F("quantity")),
+                    When(transaction_type="sell", then=-1 * F("price") * F("quantity")),
+                ),
+                Quantity=Case(
+                    When(transaction_type="buy", then=F("quantity")),
+                    When(transaction_type="sell", then=-1 * F("quantity")),
+                ),
             )
-            serializer = AssetSerializer(stocks, many=True).data
+            result = stocks.values("stock").annotate(
+                total_quantity=Sum("Quantity"),
+                avg_price=(Sum("total_price") / F("total_quantity")),
+            )
+            serializer = AssetSerializer(result, many=True).data
             return Response(serializer, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)

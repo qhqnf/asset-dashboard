@@ -1,3 +1,4 @@
+from django.db.models import Sum, F, Case, When
 from rest_framework import serializers
 from .models import StockTransaction
 from users.serializers import UserSerializer
@@ -22,7 +23,40 @@ class StockTransactionsSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         request = self.context.get("request")
-        s_transaction = StockTransaction.objects.create(
+        transaction = StockTransaction.objects.create(
             **validated_data, shareholder=request.user
         )
-        return s_transaction
+        return transaction
+
+    def validate(self, data):
+        # get data
+        user = self.context.get("request").user
+        if self.instance:
+            transaction_type = data.get(
+                "transaction_type", self.instance.transaction_type
+            )
+            stock_pk = data.get("stock", self.instance.stock).pk
+            quantity = data.get("quantity", self.instance.quantity)
+            price = data.get("price", self.instance.price)
+        else:
+            transaction_type = data.get("transaction_type")
+            stock_pk = data.get("stock").pk
+            quantity = data.get("quantity")
+            price = data.get("price")
+        # check negative value
+        if quantity < 0 or price < 0:
+            raise serializers.ValidationError(
+                "Quantity or price should not be negative"
+            )
+        # check action that sell more than they have
+        stocks = user.transactions.filter(stock=stock_pk).annotate(
+            Quantity=Case(
+                When(transaction_type="buy", then=F("quantity")),
+                When(transaction_type="sell", then=-1 * F("quantity")),
+            ),
+        )
+        result = stocks.aggregate(total_quantity=Sum("Quantity"))
+        total_quantity = result["total_quantity"]
+        if transaction_type == "sell" and total_quantity < quantity:
+            raise serializers.ValidationError("You can't sell more than you have")
+        return data
