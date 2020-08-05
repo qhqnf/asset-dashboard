@@ -137,9 +137,6 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# environment variable
-.env
-
 *createsu.py
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
