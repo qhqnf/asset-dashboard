@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 from users.models import User
 
 
-class Commmad(BaseCommand):
+class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         admin = User.objects.get_or_none(username="ebadmin")
         if admin is None:
