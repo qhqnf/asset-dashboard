@@ -6,7 +6,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         try:
             admin = User.objects.get(username="ebadmin")
-        except User.objects.DoesNotExist:
+        except User.DoesNotExist:
             admin = None
         if admin is None:
             User.objects.create_superuser("ebadmin", "didguscjf95@naver.com", "123")
