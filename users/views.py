@@ -16,21 +16,23 @@ from transactions.serializers import StockTransactionsSerializer
 class UsersViewSet(ModelViewSet):
 
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_classes = {
+        "transactions": StockTransactionsSerializer,
+        "asset": AssetSerializer,
+    }
+
+    def get_serializer_class(self):
+        if self.action in self.serializer_classes:
+            return self.serializer_classes[self.action]
+        else:
+            return UserSerializer
+        return super().get_serializer_class()
 
     def get_permissions(self):
         if self.action == "list":
             permission_classes = [IsAdminUser]
-        elif self.action == "create":
+        elif self.action == "create" or self.action == "login":
             permission_classes = [AllowAny]
-        elif (
-            self.action == "update"
-            or self.action == "retrieve"
-            or self.action == "delete"
-            or self.action == "stocks"
-            or self.action == "cash"
-        ):
-            permission_classes = [IsSelf]
         else:
             permission_classes = [IsSelf]
 
@@ -54,9 +56,7 @@ class UsersViewSet(ModelViewSet):
     @action(detail=True, methods=["get"])
     def transactions(self, request, pk):
         user = self.get_object()
-        serializer = StockTransactionsSerializer(
-            user.transactions.all(), many=True
-        ).data
+        serializer = self.get_serializer(user.transactions.all(), many=True).data
         return Response(serializer, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["get"])
@@ -77,7 +77,7 @@ class UsersViewSet(ModelViewSet):
                 total_quantity=Sum("Quantity"),
                 avg_price=(Sum("total_price") / F("total_quantity")),
             )
-            serializer = AssetSerializer(result, many=True).data
+            serializer = self.get_serializer(result, many=True).data
             return Response(serializer, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)

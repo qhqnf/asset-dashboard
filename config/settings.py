@@ -46,7 +46,9 @@ PROJECT_APPS = [
     "stocks.apps.StocksConfig",
 ]
 
-THIRD_PARTY_APPS = []
+THIRD_PARTY_APPS = [
+    "drf_yasg",
+]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
 
