@@ -12,6 +12,7 @@ pandas = "*"
 requests = "*"
 pyjwt = "*"
 drf-yasg = "*"
+python-dotenv = "*"
 
 [requires]
 python_version = "3.7"
