@@ -25,6 +25,7 @@ markupsafe==1.1.1
 numpy==1.19.1
 packaging==20.4
 pandas==1.1.0
+psycopg2-binary==2.8.5
 pyjwt==1.7.1
 pyparsing==2.4.7
 python-dateutil==2.8.1
