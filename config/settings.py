@@ -30,6 +30,7 @@ ALLOWED_HOSTS = [
     "localhost",
     "asset-dashboard-dev.ap-northeast-2.elasticbeanstalk.com",
     "172.31.35.187",
+    "172.31.37.2",
 ]
 
 
@@ -91,22 +92,23 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-if DEBUG is False:
+
+if "RDS_HOSTNAME" in os.environ:
     DATABASES = {
         "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ["RDS_DB_NAME"],
+            "USER": os.environ["RDS_USERNAME"],
+            "PASSWORD": os.environ["RDS_PASSWORD"],
+            "HOST": os.environ["RDS_HOSTNAME"],
+            "PORT": os.environ["RDS_PORT"],
         }
     }
 else:
     DATABASES = {
         "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "HOST": os.environ.get("RDS_HOST"),
-            "NAME": os.environ.get("RDS_NAME"),
-            "USER": os.environ.get("RDS_USER"),
-            "PASSWORD": os.environ.get("RDS_PASSWORD"),
-            "PORT": "5432",
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
         }
     }
 
