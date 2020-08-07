@@ -29,6 +29,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     "asset-dashboard-dev.ap-northeast-2.elasticbeanstalk.com",
+    "172.31.35.187",
 ]
 
 
