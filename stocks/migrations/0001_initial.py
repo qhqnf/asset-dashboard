@@ -7,15 +7,17 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Stock',
+            name="Stock",
             fields=[
-                ('code', models.CharField(max_length=10, primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=20)),
+                (
+                    "code",
+                    models.CharField(max_length=10, primary_key=True, serialize=False),
+                ),
+                ("name", models.CharField(max_length=40)),
             ],
         ),
     ]
