@@ -15,6 +15,7 @@ requests = "*"
 pyjwt = "*"
 drf-yasg = "*"
 python-dotenv = "*"
+django-cors-headers = "*"
 
 [requires]
 python_version = "3.6"
