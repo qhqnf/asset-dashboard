@@ -55,13 +55,13 @@ class UsersViewSet(ModelViewSet):
 
     @action(detail=True, methods=["get"])
     def transactions(self, request, pk):
-        user = self.get_object()
+        user = User.objects.get(pk=pk)
         serializer = self.get_serializer(user.transactions.all(), many=True).data
         return Response(serializer, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["get"])
     def asset(self, request, pk):
-        user = self.get_object()
+        user = User.objects.get(pk=pk)
         if user.transactions.all() is not None:
             stocks = user.transactions.all().annotate(
                 total_price=Case(
