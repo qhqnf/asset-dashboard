@@ -74,6 +74,7 @@ class UsersViewSet(ModelViewSet):
                 ),
             )
             result = stocks.values("stock").annotate(
+                name=F("stock__name"),
                 total_quantity=Sum("Quantity"),
                 avg_price=(Sum("total_price") / F("total_quantity")),
             )

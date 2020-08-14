@@ -36,6 +36,7 @@ class RelatedUserSerializer(serializers.ModelSerializer):
 class AssetSerializer(serializers.Serializer):
 
     stock = serializers.CharField(max_length=10)
+    name = serializers.CharField(max_length=10)
     total_quantity = serializers.IntegerField()
     avg_price = serializers.DecimalField(
         max_digits=None, decimal_places=1, coerce_to_string=True
