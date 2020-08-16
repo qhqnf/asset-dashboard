@@ -7,7 +7,7 @@ import pandas as pd
 
 def get_stock_data():
 
-    date = str(datetime.date.today() - datetime.timedelta(days=2))
+    date = str(datetime.date.today() - datetime.timedelta(days=3))
     date = re.sub("[^0-9]", "", date)
 
     generate_otp_url = f"https://marketdata.krx.co.kr/contents/COM/GenerateOTP.jspx?name=fileDown&filetype=csv&url=MKD/04/0406/04060200/mkd04060200&market_gubun=ALL&indx_ind_cd=&sect_tp_cd=ALL&isu_cdnm=%EC%A0%84%EC%B2%B4&isu_cd=&isu_nm=&isu_srt_cd=&secugrp=ST&secugrp=EF&stock_gubun=on&schdate={date}&pagePath=%2Fcontents%2FMKD%2F04%2F0406%2F04060200%2FMKD04060200.jsp"
