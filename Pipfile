@@ -16,6 +16,7 @@ pyjwt = "*"
 drf-yasg = "*"
 python-dotenv = "*"
 django-cors-headers = "*"
+beautifulsoup4 = "*"
 
 [requires]
 python_version = "3.6"
