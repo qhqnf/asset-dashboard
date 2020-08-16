@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import User
 from stocks.serializers import StockSerializer
+from .price_crawler import get_current_price
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -41,3 +42,8 @@ class AssetSerializer(serializers.Serializer):
     avg_price = serializers.DecimalField(
         max_digits=None, decimal_places=1, coerce_to_string=True
     )
+    price = serializers.SerializerMethodField()
+
+    def get_price(self, obj):
+        code = obj["stock"]
+        return get_current_price(code)
