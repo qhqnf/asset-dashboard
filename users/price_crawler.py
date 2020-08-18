@@ -7,8 +7,9 @@ code = "088980"
 def get_current_price(code):
 
     url = f"http://asp1.krx.co.kr/servlet/krx.asp.XMLSiseEng?code={code}"
+    headers = {"User-Agent": "Mozilla/5.0"}
 
-    response = requests.get(url)
+    response = requests.get(url, headers=headers)
     if response.status_code == 200:
         text = response.text
         soup = BeautifulSoup(text, "html.parser")
