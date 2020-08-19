@@ -44,8 +44,3 @@ def get_stock_data():
 
     return stock_data
 
-
-data = get_stock_data()
-
-print(len(data))
-
