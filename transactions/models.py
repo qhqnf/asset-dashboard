@@ -26,7 +26,7 @@ class StockTransaction(models.Model):
     quantity = models.IntegerField(blank=False)
 
     def __str__(self):
-        return f"{self.transaction_type} {self.quantity} shares of {self.stock}"
+        return f"{self.shareholder} {self.transaction_type} {self.quantity} shares of {self.stock}"
 
     def total_price(self):
         return self.price * self.quantity
