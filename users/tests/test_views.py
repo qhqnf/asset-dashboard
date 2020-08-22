@@ -24,33 +24,23 @@ class YourTestClass(TestCase):
     def setUp(self):
         self.payload = {"username": "yhc", "password": "123"}
         self.payload2 = {"username": "guest", "password": "123"}
-        User.objects.create(username="guest", password="123")
-
-    def test_create_account(self):
-        response = client.post(
-            "/api/v1/users/",
-            data=json.dumps(self.payload),
-            content_type="application/json",
-        )
-        response1 = client.post(
-            "/api/v1/users/login/",
-            data=json.dumps(self.payload),
-            content_type="application/json",
-        )
-        print(response1)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-    def test_login(self):
         client.post(
             "/api/v1/users/",
             data=json.dumps(self.payload),
             content_type="application/json",
         )
-        response = client.post(
+
+    def test_login(self):
+        response1 = client.post(
             "/api/v1/users/login/",
             data=json.dumps(self.payload),
             content_type="application/json",
         )
-        print(response.content)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
+        token = response1.data.get("token")
+        token = str(token)[2:-1]
+        client.credentials(HTTP_AUTHORIZATION="jwt " + token)
+        response2 = client.get(
+            f"/api/v1/users/1/asset/", content_type="application/json",
+        )
+        print(response2.data)
+        self.assertEqual(response2.status_code, status.HTTP_200_OK)
