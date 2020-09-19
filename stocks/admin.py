@@ -4,4 +4,5 @@ from . import models
 
 @admin.register(models.Stock)
 class StockAdmin(admin.ModelAdmin):
-    pass
+
+    list_display = ["code", "name"]

@@ -22,8 +22,8 @@ class StockTransaction(models.Model):
     stock = models.ForeignKey(
         "stocks.Stock", on_delete=models.CASCADE, related_name="transactions"
     )
-    price = models.IntegerField(blank=False)
-    quantity = models.IntegerField(blank=False)
+    price = models.IntegerField()
+    quantity = models.PositiveIntegerField()
 
     def __str__(self):
         return f"{self.shareholder} {self.transaction_type} {self.quantity} shares of {self.stock}"
