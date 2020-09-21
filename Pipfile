@@ -18,6 +18,8 @@ python-dotenv = "*"
 django-cors-headers = "*"
 beautifulsoup4 = "*"
 ipython = "*"
+django-extensions = "*"
+django-debug-toolbar = "*"
 
 [requires]
 python_version = "3.6"

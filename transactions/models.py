@@ -25,6 +25,9 @@ class StockTransaction(models.Model):
     price = models.IntegerField()
     quantity = models.PositiveIntegerField()
 
+    class Meta:
+        ordering = ["shareholder"]
+
     def __str__(self):
         return f"{self.shareholder} {self.transaction_type} {self.quantity} shares of {self.stock}"
 

@@ -45,21 +45,24 @@ DJANGO_APPS = [
     "django.contrib.staticfiles",
 ]
 
+THIRD_PARTY_APPS = [
+    "drf_yasg",
+    "rest_framework",
+    "corsheaders",
+    "django_extensions",
+    "debug_toolbar",
+]
+
 PROJECT_APPS = [
     "users.apps.UsersConfig",
     "transactions.apps.TransactionsConfig",
     "stocks.apps.StocksConfig",
 ]
 
-THIRD_PARTY_APPS = [
-    "drf_yasg",
-    "rest_framework",
-    "corsheaders",
-]
-
-INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -173,3 +176,7 @@ REST_FRAMEWORK = {
 CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOW_CREDENTIALS = True
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
