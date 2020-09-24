@@ -62,8 +62,9 @@ class UsersViewSet(ModelViewSet):
     @action(detail=True, methods=["get"])
     def asset(self, request, pk):
         user = User.objects.get(pk=pk)
-        if user.transactions.all() is not None:
-            stocks = user.transactions.all().annotate(
+        qs = user.transactions.all()
+        if qs is not None:
+            stocks = qs.annotate(
                 total_price=Case(
                     When(transaction_type="buy", then=F("price") * F("quantity")),
                     When(transaction_type="sell", then=-1 * F("price") * F("quantity")),

@@ -55,7 +55,6 @@ class StockTransactionsSerializer(serializers.ModelSerializer):
                 When(transaction_type="sell", then=-1 * F("quantity")),
             ),
         )
-        print(stocks.count())
         if stocks.count() != 0:
             result = stocks.aggregate(total_quantity=Sum("Quantity"))
             total_quantity = result["total_quantity"]
